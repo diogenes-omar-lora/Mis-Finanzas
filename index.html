@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Finanzas Personales</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+      <!-- Aplicación Principal -->
+    <div id="app-screen" class="app-container hidden">
+        <!-- Barra lateral -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-wallet"></i> Mis Finanzas</h2>
+                <button id="close-sidebar" class="close-sidebar-btn" aria-label="Cerrar menú">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="sidebar-user" class="sidebar-user">
+                <i class="fas fa-user-circle"></i>
+                <span id="sidebar-username">Usuario</span>
+            </div>
+            <ul>
+                <li><a href="#" class="nav-link active" data-section="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                <li><a href="#" class="nav-link" data-section="accounts"><i class="fas fa-piggy-bank"></i> Cuentas</a></li>
+                <li><a href="#" class="nav-link" data-section="transactions"><i class="fas fa-exchange-alt"></i> Transacciones</a></li>
+                <li><a href="#" class="nav-link" data-section="transfers"><i class="fas fa-sync-alt"></i> Transferencias</a></li>
+                <li><a href="#" class="nav-link" data-section="users" id="users-nav-link" style="display: none;"><i class="fas fa-users"></i> Usuarios</a></li>
+                <li><a href="#" class="nav-link" data-section="reports"><i class="fas fa-chart-pie"></i> Reportes</a></li>
+                <li><a href="#" class="nav-link" id="logout-btn" data-section="logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+            </ul>
+        </div>
+
+        <!-- Contenido principal -->
+        <div class="main-content">
+            <div class="header">
+                <div class="header-left">
+                    <button id="menu-toggle" class="menu-toggle-btn" aria-label="Abrir menú">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                     <h1 id="section-title">Dashboard</h1>
+                </div>
+                <div class="header-actions">
+                    <button id="theme-toggle" class="theme-toggle-btn" title="Cambiar tema">
+                        <span class="theme-icon">🌙</span>
+                    </button>
+                        <!-- Selector de mes para dashboard y reportes -->
+                    <div class="month-selector dashboard-only" style="display:inline-flex;gap:0.5rem;align-items:center;margin-left:0.5rem;">
+                        <input type="month" id="dashboard-month-picker" aria-label="Mes y año" style="padding:0.4rem;border-radius:6px;border:1px solid #ccc;">
+                        <button id="dashboard-current-month-btn" class="btn" style="width:auto;padding:0.5rem 0.75rem;">Mes actual</button>
+                    </div>
+                    <button id="export-csv-btn" class="btn btn-success reports-only" style="display:none;"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+                </div>
+            </div>
+
+            <!-- Dashboard -->
+            <div id="dashboard-section" class="section">
+                <div class="dashboard-cards">
+                    <div class="dashboard-card">
+                        <h3>Ingreso Mensual</h3>
+                        <div class="amount income" id="total-income">$0.00</div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Gasto Mensual</h3>
+                        <div class="amount expense" id="total-expense">$0.00</div>
+                    </div>
+                </div>
+
+                <div id="accounts-balance-cards" class="accounts-balance-cards">
+                    <!-- Las tarjetas de cada cuenta se generarán dinámicamente aquí -->
+                </div>
+
+                <div class="card">
+                    <h3>Resumen Financiero</h3>
+                    <div class="chart-container">
+                        <canvas id="finance-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Últimas Transacciones</h3>
+                    <!-- Wrapper con scroll para mostrar solo las últimas 8 filas y permitir scroll si hay más -->
+                    <div class="recent-transactions-wrapper">
+                        <table id="recent-transactions">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Descripción</th>
+                                    <th>Categoría</th>
+                                    <th>Monto</th>
+                                    <th>Cuenta</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Las transacciones se cargarán aquí dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cuentas -->
+            <div id="accounts-section" class="section hidden">
+                <div class="card">
+                    <h3>Mis Cuentas</h3>
+                    <div id="accounts-alert" class="alert hidden"></div>
+                    <table id="accounts-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Saldo</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Las cuentas se cargarán aquí dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h3>Agregar Nueva Cuenta</h3>
+                    <form id="account-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="account-name">Nombre de la Cuenta</label>
+                                <input type="text" id="account-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="account-type">Tipo de Cuenta</label>
+                                <select id="account-type" required>
+                                    <option value="">Selecciona un tipo</option>
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Cuenta Corriente">Cuenta Corriente</option>
+                                    <option value="Cuenta de Ahorros">Cuenta de Ahorros</option>
+                                    <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
+                                    <option value="Inversión">Inversión</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="account-balance">Saldo Inicial</label>
+                            <input type="number" id="account-balance" step="0.01" required>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-transaction">Agregar Cuenta</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Transacciones -->
+            <div id="transactions-section" class="section hidden">
+                <div class="card">
+                    <h3>Agregar Transacción</h3>
+                    <form id="transaction-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="transaction-date">Fecha</label>
+                                <input type="date" id="transaction-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="transaction-type">Tipo</label>
+                                <select id="transaction-type" required>
+                                    <option value="">Selecciona un tipo</option>
+                                    <option value="income">Ingreso</option>
+                                    <option value="expense">Gasto</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="transaction-description">Descripción</label>
+                                <input type="text" id="transaction-description" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="transaction-category">Categoría</label>
+                                <select id="transaction-category" required>
+                                    <option value="">Selecciona una categoría</option>
+                                    <option value="Alimentación">Alimentación</option>
+                                    <option value="Transporte">Transporte</option>
+                                    <option value="Vivienda">Vivienda</option>
+                                    <option value="Salud">Salud</option>
+                                    <option value="Entretenimiento">Entretenimiento</option>
+                                    <option value="Educación">Educación</option>
+                                    <option value="Ingresos">Ingresos</option>
+                                    <option value="Transferencia">Transferencia</option>
+                                    <option value="Otros">Otros</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="transaction-amount">Monto</label>
+                                <input type="number" id="transaction-amount" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="transaction-account">Cuenta</label>
+                                <select id="transaction-account" required>
+                                    <option value="">Selecciona una cuenta</option>
+                                    <!-- Las cuentas se cargarán aquí dinámicamente -->
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-transaction">Agregar Transacción</button>
+                    </form>
+                </div>
+                <div class="card">
+                    <h3>Filtros</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="filter-type">Tipo</label>
+                            <select id="filter-type">
+                                <option value="">Todos</option>
+                                <option value="income">Ingreso</option>
+                                <option value="expense">Gasto</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-category">Categoría</label>
+                            <select id="filter-category">
+                                <option value="">Todas</option>
+                                <option value="Alimentación">Alimentación</option>
+                                <option value="Transporte">Transporte</option>
+                                <option value="Vivienda">Vivienda</option>
+                                <option value="Salud">Salud</option>
+                                <option value="Entretenimiento">Entretenimiento</option>
+                                <option value="Educación">Educación</option>
+                                <option value="Ingresos">Ingresos</option>
+                                <option value="Transferencia">Transferencia</option>
+                                <option value="Otros">Otros</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-account">Cuenta</label>
+                            <select id="filter-account">
+                                <option value="">Todas</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="filter-date-from">Desde</label>
+                            <input type="date" id="filter-date-from">
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-date-to">Hasta</label>
+                            <input type="date" id="filter-date-to">
+                        </div>
+                        <div class="form-group">
+                            <button id="apply-filters" class="btn">Aplicar Filtros</button>
+                            <button id="clear-filters" class="btn btn-danger">Limpiar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Registro de Transacciones</h3>
+                    <div id="transactions-alert" class="alert hidden"></div>
+                    <div class="transactions-table-wrapper">
+                        <table id="transactions-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Descripción</th>
+                                <th>Categoría</th>
+                                <th>Tipo</th>
+                                <th>Monto</th>
+                                <th>Cuenta</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Las transacciones se cargarán aquí dinámicamente -->
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transferencias -->
+            <div id="transfers-section" class="section hidden">
+                <div class="card">
+                    <h3>Transferencias entre Cuentas</h3>
+                    <div id="transfers-alert" class="alert hidden"></div>
+                    <div class="transfers-table-wrapper">
+                        <table id="transfers-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Descripción</th>
+                                <th>Desde</th>
+                                <th>Hacia</th>
+                                <th>Monto</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Las transferencias se cargarán aquí dinámicamente -->
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Nueva Transferencia</h3>
+                    <form id="transfer-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="transfer-date">Fecha</label>
+                                <input type="date" id="transfer-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="transfer-description">Descripción</label>
+                                <input type="text" id="transfer-description" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="transfer-from">Desde Cuenta</label>
+                                <select id="transfer-from" required>
+                                    <option value="">Selecciona una cuenta</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="transfer-to">Hacia Cuenta</label>
+                                <select id="transfer-to" required>
+                                    <option value="">Selecciona una cuenta</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="transfer-amount">Monto</label>
+                            <input type="number" id="transfer-amount" step="0.01" required>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-transfer">Realizar Transferencia</button>
+                    </form>
+                </div>
+            </div>
+            <!-- Usuarios - Solo para administradores -->
+            <div id="users-section" class="section hidden">
+                <div class="card">
+                    <h3><i class="fas fa-users"></i> Gestión de Usuarios</h3>
+                    <div id="users-alert" class="alert hidden"></div>
+                    <table id="users-table">
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Rol</th>
+                                <th>Fecha de Registro</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Los usuarios se cargarán aquí dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-user-plus"></i> Editar Usuario</h3>
+                    <form id="user-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="edit-username">Usuario</label>
+                                <input type="text" id="edit-username" required readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-role">Rol</label>
+                                <select id="edit-role" required>
+                                    <option value="user">Usuario Normal</option>
+                                    <option value="admin">Administrador</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="password-row">
+                            <div class="form-group">
+                                <label for="edit-password">Nueva Contraseña (dejar en blanco para no cambiar)</label>
+                                <input type="password" id="edit-password">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirm-edit-password">Confirmar Nueva Contraseña</label>
+                                <input type="password" id="confirm-edit-password">
+                            </div>
+                        </div>
+                        <div class="user-form-buttons">
+                            <button type="submit" class="btn btn-success">Actualizar Usuario</button>
+                            <button type="button" id="cancel-edit" class="btn btn-danger">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Reportes -->
+            <div id="reports-section" class="section hidden">
+                <div class="card">
+                    <h3>Reporte de Gastos por Categoría</h3>
+                    <div class="chart-container">
+                        <canvas id="expenses-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Reporte de Ingresos vs Gastos</h3>
+                    <div class="chart-container">
+                        <canvas id="income-expense-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Detalle de Transacciones</h3>
+                    <table id="reports-transactions-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Tipo</th>
+                                <th>Categoría</th>
+                                <th>Cuenta</th>
+                                <th>Descripción</th>
+                                <th>Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Las transacciones se cargarán dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

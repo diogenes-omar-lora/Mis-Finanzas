@@ -1,0 +1,179 @@
+/* ===== HEADER MEJORADO ===== */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+.header-left h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    color: var(--dark-color);
+    font-weight: 600;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.menu-toggle-btn {
+    display: none;
+    background: var(--gradient);
+    border: none;
+    border-radius: 8px;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    color: white;
+    font-size: 1.2rem;
+}
+
+/* ===== RESPONSIVE ===== */
+
+/* Móviles y Tablets (hasta 1023px) */
+@media (max-width: 1023px) {
+    .menu-toggle-btn {
+        display: flex;
+    }
+    
+    .header {
+        flex-wrap: wrap;
+    }
+    
+    .header-left {
+        order: 1;
+        flex: 1 1 100%;
+        margin-bottom: 1rem;
+        justify-content: flex-start;
+    }
+    
+    .header-actions {
+        order: 2;
+        flex: 1;
+        justify-content: flex-end;
+    }
+    
+    .header-left h1 {
+        font-size: 1.5rem;
+        text-align: left;
+        margin-left: 0.5rem;
+    }
+    
+    /* Ajustes para móviles pequeños */
+    @media (max-width: 480px) {
+        .header-actions {
+            flex-wrap: nowrap;
+            gap: 0.25rem;
+        }
+        
+        .month-selector {
+            display: none !important;
+        }
+        
+        .header-left h1 {
+            font-size: 1.25rem;
+        }
+        
+        #export-csv-btn {
+            padding: 0.4rem 0.6rem;
+            font-size: 0.8rem;
+        }
+        
+        #export-csv-btn i {
+            margin-right: 0.2rem;
+        }
+    }
+}
+
+/* Tablets (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .header {
+        flex-wrap: nowrap;
+    }
+    
+    .header-left {
+        order: 1;
+        flex: 0 1 auto;
+        margin-bottom: 0;
+    }
+    
+    .header-actions {
+        order: 2;
+        flex: 1;
+        justify-content: flex-end;
+    }
+    
+    .header-left h1 {
+        font-size: 1.6rem;
+        margin-left: 0;
+    }
+}
+
+/* Desktop (1024px en adelante) */
+@media (min-width: 1024px) {
+    .header {
+        flex-wrap: nowrap;
+    }
+    
+    .header-left {
+        flex: 0 1 auto;
+        justify-content: flex-start;
+    }
+    
+    .header-left h1 {
+        font-size: 1.75rem;
+        margin-left: 0;
+        min-width: 200px; /* Asegura que el título tenga espacio suficiente */
+    }
+    
+    .header-actions {
+        flex: 1;
+        justify-content: flex-end;
+    }
+    
+    .menu-toggle-btn {
+        display: none;
+    }
+}
+
+/* Pantallas grandes (1200px en adelante) */
+@media (min-width: 1200px) {
+    .header-left h1 {
+        font-size: 2rem;
+    }
+}
+
+/* ===== BOTÓN CAMBIO DE TEMA ===== */
+.theme-toggle-btn {
+    background: var(--gradient);
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+}
+.theme-toggle-btn:hover {
+    transform: translateY(-2px) rotate(15deg);
+    box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+}
