@@ -1,3 +1,8 @@
+💰 Finanzas Personales - App Web
+https://img.shields.io/badge/version-1.0.0-blue.svg
+https://img.shields.io/badge/license-MIT-green.svg
+
+Una aplicación web moderna para gestionar tus finanzas personales de manera intuitiva y efectiva.
 ✨ Características Principales
 📊 Dashboard Overview: Vista general de tu situación financiera
 
