@@ -59,6 +59,52 @@
             </div>
         </div>
     </div>
+    <!-- 🔒 PROTECCIÓN BÁSICA -->
+    <script>
+        // Bloquear clic derecho
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        // Bloquear F12, Ctrl+Shift+I, Ctrl+U
+        document.addEventListener('keydown', function(e) {
+            // F12
+            if (e.keyCode === 123) {
+                e.preventDefault();
+                return false;
+            }
+            // Ctrl+Shift+I
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                e.preventDefault();
+                return false;
+            }
+            // Ctrl+U
+            if (e.ctrlKey && e.keyCode === 85) {
+                e.preventDefault();
+                return false;
+            }
+            // Ctrl+Shift+C
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // Bloquear selección de texto (opcional)
+        document.addEventListener('selectstart', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        // Bloquear arrastre de imágenes
+        document.addEventListener('dragstart', function(e) {
+            e.preventDefault();
+            return false;
+        });
+
+        console.log('🔒 Protección activada');
+    </script>
 
     <script src="js/login.js"></script>
 </body>
