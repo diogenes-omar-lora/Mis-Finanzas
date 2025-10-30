@@ -1,0 +1,25 @@
+{
+  "name": "mis-finanzas",
+  "version": "1.0.0",
+  "description": "💰 Finanzas Personales - App Web\r https://img.shields.io/badge/version-1.0.0-blue.svg\r https://img.shields.io/badge/license-MIT-green.svg",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diogenes-omar-lora/Mis-Finanzas.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/diogenes-omar-lora/Mis-Finanzas/issues"
+  },
+  "homepage": "https://github.com/diogenes-omar-lora/Mis-Finanzas#readme",
+  "dependencies": {
+    "javascript-obfuscator": "^4.1.1",
+    "terser": "^5.44.0"
+  }
+}

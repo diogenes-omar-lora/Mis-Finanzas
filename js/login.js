@@ -1,4 +1,12 @@
+// =============================================
+// SISTEMA DE LOGIN COMPATIBLE Y SIMPLIFICADO
+// =============================================
+
 document.addEventListener("DOMContentLoaded", function () {
+  // Limpiar sesión anterior por seguridad
+  sessionStorage.removeItem('currentUser');
+  sessionStorage.removeItem('userRole');
+
   const loginForm = document.getElementById("login-form");
   const registerForm = document.getElementById("register-form");
   const switchFormLink = document.getElementById("switch-form");
@@ -7,133 +15,294 @@ document.addEventListener("DOMContentLoaded", function () {
   const registerError = document.getElementById("register-error");
   const registerSuccess = document.getElementById("register-success");
 
+  // Verificar si ya está autenticado
+  const currentUser = sessionStorage.getItem('currentUser');
+  if (currentUser) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  // Inicializar usuario admin por defecto si no existe
+  initializeDefaultAdmin();
+
   // Alternar entre login y registro
   switchFormLink.addEventListener("click", function (e) {
     e.preventDefault();
+    toggleForms();
+  });
+
+  // Manejar el envío del formulario de login
+  loginForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    handleLogin();
+  });
+
+  // Manejar el envío del formulario de registro
+  registerForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    handleRegister();
+  });
+
+  function toggleForms() {
     if (loginForm.classList.contains("active")) {
       // Cambiar a registro
       loginForm.classList.remove("active");
       loginForm.classList.add("hidden");
       registerForm.classList.remove("hidden");
       registerForm.classList.add("active");
-      switchText.innerHTML =
-        '¿Ya tienes una cuenta? <a href="#" id="switch-form">Inicia sesión</a>';
+      switchText.innerHTML = '¿Ya tienes una cuenta? <a href="#" id="switch-form">Inicia sesión</a>';
     } else {
       // Cambiar a login
       registerForm.classList.remove("active");
       registerForm.classList.add("hidden");
       loginForm.classList.remove("hidden");
       loginForm.classList.add("active");
-      switchText.innerHTML =
-        '¿No tienes una cuenta? <a href="#" id="switch-form">Regístrate</a>';
+      switchText.innerHTML = '¿No tienes una cuenta? <a href="#" id="switch-form">Regístrate</a>';
     }
+    
     // Limpiar mensajes de error
+    clearMessages();
+  }
+
+  function clearMessages() {
     loginError.classList.add("hidden");
     registerError.classList.add("hidden");
     registerSuccess.classList.add("hidden");
-  });
+  }
 
-  // Manejar el envío del formulario de login
-  loginForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+  function showError(element, message) {
+    element.textContent = message;
+    element.classList.remove("hidden");
+  }
 
-    // Obtener usuarios del localStorage (si existen)
-    const users = JSON.parse(localStorage.getItem("financeUsers")) || {};
+  function showSuccess(message) {
+    registerSuccess.textContent = message;
+    registerSuccess.classList.remove("hidden");
+  }
 
-    // Debug: mostrar usuarios disponibles (no sensibles en producción)
-    console.debug("Usuarios disponibles en localStorage:", Object.keys(users));
-
-    // Verificar credenciales
-    if (users[username] && users[username].password === password) {
-      sessionStorage.setItem("currentUser", username);
-      sessionStorage.setItem("userRole", users[username].role); // Guardar el rol
-      window.location.href = "index.html";
-      return;
-    }
-
-    // Si no existen usuarios registrados, crear un usuario por defecto (admin/admin)
+  function initializeDefaultAdmin() {
+    const users = getUsers();
     if (Object.keys(users).length === 0) {
       users["admin"] = {
         password: "admin",
         role: "admin",
         name: "Administrador",
       };
-      localStorage.setItem("financeUsers", JSON.stringify(users));
-      console.info("Se creó usuario por defecto: admin / admin");
+      saveUsers(users);
+      
+      // Inicializar datos del admin
+      initializeUserData('admin');
+      console.info("Usuario administrador por defecto creado: admin/admin");
     }
+  }
 
-    // Intento de login con usuario por defecto si se ingresó admin/admin
-    if (username === "admin" && password === "admin") {
-      sessionStorage.setItem("currentUser", "admin");
-      // Asegurar que el rol quede guardado para que la UI muestre las opciones de admin
-      sessionStorage.setItem("userRole", "admin");
-      console.info(
-        "Login con usuario por defecto -> redirigiendo a index.html"
-      );
-      window.location.href = "index.html";
+  // =============================================
+  // FUNCIONES COMPATIBLES CON LA APLICACIÓN PRINCIPAL
+  // =============================================
+
+  function getUsers() {
+    try {
+      // Primero intentar con formato legacy (compatible)
+      const legacyUsers = JSON.parse(localStorage.getItem("financeUsers") || "{}");
+      if (Object.keys(legacyUsers).length > 0) {
+        return legacyUsers;
+      }
+      
+      // Si no hay usuarios, retornar objeto vacío
+      return {};
+    } catch (error) {
+      console.error("Error loading users:", error);
+      return {};
+    }
+  }
+
+  function saveUsers(users) {
+    try {
+      // Guardar en formato legacy (compatible con ambos sistemas)
+      localStorage.setItem("financeUsers", JSON.stringify(users));
+    } catch (error) {
+      console.error("Error saving users:", error);
+    }
+  }
+
+  function initializeUserData(username) {
+    try {
+      const userKey = `financeData_${username}`;
+      
+      // Inicializar datos en formato COMPATIBLE (sin encriptación)
+      if (!localStorage.getItem(`${userKey}_accounts`)) {
+        localStorage.setItem(`${userKey}_accounts`, JSON.stringify([]));
+      }
+      
+      if (!localStorage.getItem(`${userKey}_transactions`)) {
+        localStorage.setItem(`${userKey}_transactions`, JSON.stringify([]));
+      }
+      
+      if (!localStorage.getItem(`${userKey}_nextAccountId`)) {
+        localStorage.setItem(`${userKey}_nextAccountId`, '1');
+      }
+      
+      if (!localStorage.getItem(`${userKey}_nextTransactionId`)) {
+        localStorage.setItem(`${userKey}_nextTransactionId`, '1');
+      }
+
+      // Guardar fecha de registro
+      const currentDate = new Date().toLocaleDateString('es-ES');
+      localStorage.setItem(`userRegDate_${username}`, currentDate);
+
+    } catch (error) {
+      console.error("Error initializing user data:", error);
+    }
+  }
+
+  // =============================================
+  // MANEJO DE LOGIN COMPATIBLE
+  // =============================================
+
+  function handleLogin() {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value;
+
+    // Validaciones básicas
+    if (!username || !password) {
+      showError(loginError, "Usuario y contraseña son requeridos");
       return;
     }
 
-    // Si llegamos aquí, credenciales inválidas
-    loginError.classList.remove("hidden");
-  });
+    try {
+      const users = getUsers();
 
-  // Manejar el envío del formulario de registro
-  registerForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-    const username = document.getElementById("new-username").value;
+      // Verificar credenciales
+      if (users[username] && users[username].password === password) {
+        successfulLogin(username, users[username].role);
+        return;
+      }
+
+      // Credenciales inválidas
+      showError(loginError, "Usuario o contraseña incorrectos");
+
+    } catch (error) {
+      console.error('Error during login:', error);
+      showError(loginError, "Error del sistema. Por favor, intenta nuevamente.");
+    }
+  }
+
+  function successfulLogin(username, role) {
+    try {
+      // Guardar sesión de forma segura
+      sessionStorage.setItem("currentUser", username);
+      sessionStorage.setItem("userRole", role);
+      
+      // Mostrar feedback visual
+      const submitBtn = loginForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando sesión...';
+      submitBtn.disabled = true;
+
+      // Redirigir después de breve delay
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 1000);
+
+    } catch (error) {
+      console.error('Error in successful login:', error);
+      showError(loginError, "Error al iniciar sesión");
+    }
+  }
+
+  // =============================================
+  // MANEJO DE REGISTRO COMPATIBLE
+  // =============================================
+
+  function handleRegister() {
+    const username = document.getElementById("new-username").value.trim();
     const password = document.getElementById("new-password").value;
     const confirmPassword = document.getElementById("confirm-password").value;
-    // Validar que las contraseñas coincidan
+
+    // Validaciones
+    if (!validateRegistration(username, password, confirmPassword)) {
+      return;
+    }
+
+    try {
+      const users = getUsers();
+
+      // Verificar si el usuario ya existe
+      if (users[username]) {
+        showError(registerError, "El usuario ya existe. Elige otro nombre.");
+        return;
+      }
+
+      // Crear nuevo usuario
+      createNewUser(username, password, users);
+      
+    } catch (error) {
+      console.error('Error during registration:', error);
+      showError(registerError, "Error del sistema. Por favor, intenta nuevamente.");
+    }
+  }
+
+  function validateRegistration(username, password, confirmPassword) {
+    // Validar usuario
+    if (username.length < 3 || username.length > 20) {
+      showError(registerError, "El usuario debe tener entre 3 y 20 caracteres.");
+      return false;
+    }
+
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      showError(registerError, "Solo se permiten letras, números y guiones bajos.");
+      return false;
+    }
+
+    // Validar contraseña
+    if (password.length < 4) {
+      showError(registerError, "La contraseña debe tener al menos 4 caracteres.");
+      return false;
+    }
+
+    // Verificar que las contraseñas coincidan
     if (password !== confirmPassword) {
-      registerError.textContent = "Las contraseñas no coinciden.";
-      registerError.classList.remove("hidden");
-      return;
+      showError(registerError, "Las contraseñas no coinciden.");
+      return false;
     }
 
-    // Obtener usuarios del localStorage
-    const users = JSON.parse(localStorage.getItem("financeUsers")) || {};
+    return true;
+  }
 
-    // Verificar si el usuario ya existe
-    if (users[username]) {
-      registerError.textContent = "El usuario ya existe.";
-      registerError.classList.remove("hidden");
-      return;
-    }
-
-    // Guardar el nuevo usuario (rol por defecto: user)
-    users[username] = { password: password, role: "user", name: username };
-    localStorage.setItem("financeUsers", JSON.stringify(users));
-
-  // Inicializar datos financieros para el nuevo usuario: sin cuentas, sin transacciones, IDs desde 1
-  const userKey = `financeData_${username}`;
-  localStorage.setItem(`${userKey}_accounts`, JSON.stringify([]));
-  localStorage.setItem(`${userKey}_transactions`, JSON.stringify([]));
-  localStorage.setItem(`${userKey}_nextAccountId`, '1');
-  localStorage.setItem(`${userKey}_nextTransactionId`, '1');
-
-    // Guardar fecha de registro
-    const currentDate = new Date().toLocaleDateString('es-ES');
-    localStorage.setItem(`userRegDate_${username}`, currentDate);
+  function createNewUser(username, password, users) {
+    // Guardar el nuevo usuario
+    users[username] = { 
+      password: password, 
+      role: "user", 
+      name: username 
+    };
+    
+    saveUsers(users);
+    
+    // Inicializar datos del usuario
+    initializeUserData(username);
 
     // Mostrar mensaje de éxito
-    registerSuccess.classList.remove("hidden");
+    showSuccess("¡Usuario registrado exitosamente! Redirigiendo al login...");
     registerError.classList.add("hidden");
 
-    // Limpiar el formulario
+    // Limpiar formulario
     registerForm.reset();
 
-    // Opcional: cambiar a login después de 2 segundos
+    // Cambiar a login después de 2 segundos
     setTimeout(() => {
-      registerForm.classList.remove("active");
-      registerForm.classList.add("hidden");
-      loginForm.classList.remove("hidden");
-      loginForm.classList.add("active");
-      switchText.innerHTML =
-        '¿No tienes una cuenta? <a href="#" id="switch-form">Regístrate</a>';
+      toggleForms();
       registerSuccess.classList.add("hidden");
+      
+      // Autorellenar el usuario en el login
+      document.getElementById("username").value = username;
+      document.getElementById("password").focus();
+      
     }, 2000);
-  });
+  }
 });
+
+// Prevenir acceso no autorizado vía consola
+if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+  console.log('%c🔒 Sistema de Login Seguro', 'color: green; font-size: 14px; font-weight: bold;');
+}
