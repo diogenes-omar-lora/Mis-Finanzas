@@ -1,3 +1,7 @@
+// =============================================
+// APLICACIÓN PRINCIPAL - VERSIÓN COMPLETA Y FUNCIONAL
+// =============================================
+
 // Verificar autenticación al cargar la aplicación
 document.addEventListener('DOMContentLoaded', function() {
     const currentUser = sessionStorage.getItem('currentUser');
@@ -6,17 +10,69 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
     
-    // Inicializar la aplicación solo si está autenticado
-    app = new FinanceApp();
+    try {
+        // Inicializar la aplicación solo si está autenticado
+        app = new FinanceApp();
+    } catch (error) {
+        console.error('Error initializing application:', error);
+        showFriendlyError(error);
+    }
 });
 
-// Gestión de datos con localStorage
+function showFriendlyError(error) {
+    const errorElement = document.createElement('div');
+    errorElement.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 20px;
+    `;
+    errorElement.innerHTML = `
+        <h2 style="color: #ff6b6b; margin-bottom: 20px;">Error al cargar la aplicación</h2>
+        <p style="margin-bottom: 10px;">${error.message || 'Error desconocido'}</p>
+        <p style="margin-bottom: 30px; opacity: 0.8;">Por favor, recarga la página o contacta al soporte.</p>
+        <button onclick="window.location.reload()" style="
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        ">Reintentar</button>
+        <button onclick="window.location.href='login.html'" style="
+            background: transparent;
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+        ">Volver al Login</button>
+    `;
+    
+    document.body.innerHTML = '';
+    document.body.appendChild(errorElement);
+}
+
+// Gestión de datos COMPATIBLE
 class DataManager {
     constructor() {
         this.initializeData();
     }
 
-    // Métodos de gestión de usuarios
     getUsers() {
         return JSON.parse(localStorage.getItem('financeUsers') || '{}');
     }
@@ -41,7 +97,6 @@ class DataManager {
 
         const userKey = `financeData_${currentUser}`;
 
-        // Inicializar datos si no existen para el usuario actual
         if (!localStorage.getItem(`${userKey}_accounts`)) {
             const initialAccounts = [
                 { id: 1, name: "Efectivo", type: "Efectivo", balance: 500.00 },
@@ -70,7 +125,6 @@ class DataManager {
         }
     }
 
-    // Métodos de acceso a datos
     getCurrentUserKey() {
         const currentUser = sessionStorage.getItem('currentUser');
         return `financeData_${currentUser}`;
@@ -110,7 +164,6 @@ class DataManager {
         localStorage.setItem(`${userKey}_transactions`, JSON.stringify(transactions));
     }
 
-    // Métodos de utilidad de fecha/hora
     getCurrentDate() {
         const today = new Date();
         return today.toISOString().split('T')[0];
@@ -128,11 +181,6 @@ class DataManager {
         });
     }
 
-    getTransactionsForCurrentMonth() {
-        const today = new Date();
-        return this.getTransactionsByMonth(today.getFullYear(), today.getMonth());
-    }
-
     parseDateLocal(dateString) {
         if (!dateString) return new Date(NaN);
         const datePart = dateString.split('T')[0];
@@ -145,7 +193,7 @@ class DataManager {
     }
 }
 
-// Clase principal de la aplicación
+// Clase principal de la aplicación COMPLETA
 class FinanceApp {
     constructor() {
         this.dataManager = new DataManager();
@@ -163,23 +211,32 @@ class FinanceApp {
     }
 
     initializeApp() {
-        this.setupDOMElements();
-        this.checkAdminAccess();
-        this.setupEventListeners();
-        this.setupForms();
-        this.initMonthSelector();
-        
-        // Mostrar la aplicación
-        this.appScreen.classList.remove('hidden');
-        
-        // Cargar datos iniciales
-        this.updateDashboard();
-        this.loadAccountsTable();
-        this.loadTransactionsTable();
-        this.updateAccountSelects();
+        try {
+            this.setupDOMElements();
+            this.checkAdminAccess();
+            this.setupEventListeners();
+            this.setupForms();
+            this.initMonthSelector();
+            
+            // Mostrar la aplicación
+            this.appScreen.classList.remove('hidden');
+            
+            // Cargar datos iniciales
+            this.updateDashboard();
+            this.loadAccountsTable();
+            this.loadTransactionsTable();
+            this.updateAccountSelects();
 
-        this.setupExportButton();
+            this.setupExportButton();
+        } catch (error) {
+            console.error('Error in initializeApp:', error);
+            throw error;
+        }
     }
+
+    // =============================================
+    // MÉTODOS DE CONFIGURACIÓN DEL DOM
+    // =============================================
 
     setupDOMElements() {
         this.appScreen = document.getElementById('app-screen');
@@ -219,7 +276,10 @@ class FinanceApp {
         }
     }
 
-    // Gestión de usuarios y admin
+    // =============================================
+    // MÉTODOS DE AUTENTICACIÓN Y USUARIOS
+    // =============================================
+
     checkAdminAccess() {
         const userRole = sessionStorage.getItem('userRole');
         const usersNavLink = document.getElementById('users-nav-link');
@@ -400,7 +460,10 @@ class FinanceApp {
         if (userForm) userForm.reset();
     }
 
-    // Gestión de navegación y menú
+    // =============================================
+    // MÉTODOS DE NAVEGACIÓN Y EVENTOS
+    // =============================================
+
     setupEventListeners() {
         if (this.logoutBtn) {
             this.logoutBtn.addEventListener('click', () => this.handleLogout());
@@ -469,7 +532,6 @@ class FinanceApp {
         if (transferDate) transferDate.valueAsDate = new Date();
     }
 
-    // Gestión del tema
     toggleTheme() {
         this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
         this.applyTheme(this.currentTheme);
@@ -489,7 +551,6 @@ class FinanceApp {
         }
     }
 
-    // Gestión del menú móvil
     toggleMobileMenu() {
         if (window.innerWidth <= 767) {
             return;
@@ -500,7 +561,6 @@ class FinanceApp {
     }
 
     closeMobileMenu() {
-    // COMPLETAMENTE deshabilitado para móviles
         if (window.innerWidth <= 767) {
             return;
         }
@@ -509,11 +569,8 @@ class FinanceApp {
         this.updateMobileMenu();
     }
 
-    // En la clase FinanceApp, modifica el método updateMobileMenu para móviles
     updateMobileMenu() {
-    // COMPLETAMENTE deshabilitado para móviles
         if (window.innerWidth <= 767) {
-            // Forzar que el sidebar sea visible en móviles
             const sidebar = document.querySelector('.sidebar');
             if (sidebar) {
                 sidebar.style.display = 'block';
@@ -524,7 +581,6 @@ class FinanceApp {
             return;
         }
 
-        // Solo para tablets y desktop
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.querySelector('.menu-overlay');
         const menuIcon = document.querySelector('.menu-toggle-btn i');
@@ -544,20 +600,17 @@ class FinanceApp {
         document.body.style.overflow = this.isMobileMenuOpen ? 'hidden' : '';
     }
 
-// Y modifica handleResize para móviles
-handleResize() {
-    // COMPLETAMENTE deshabilitado para móviles
-    if (window.innerWidth <= 767) {
-        return;
+    handleResize() {
+        if (window.innerWidth <= 767) {
+            return;
+        }
+        
+        if (window.innerWidth >= 768 && this.isMobileMenuOpen) {
+            this.closeMobileMenu();
+        }
     }
-    
-    if (window.innerWidth >= 768 && this.isMobileMenuOpen) {
-        this.closeMobileMenu();
-    }
-}
 
-    // Navegación
-   handleNavigation(e) {
+    handleNavigation(e) {
         e.preventDefault();
 
         const link = e.currentTarget || e.target.closest('.nav-link');
@@ -565,7 +618,6 @@ handleResize() {
 
         const sectionId = link.getAttribute('data-section');
 
-        // En móviles, no hacer toggle de month selector
         if (window.innerWidth > 767) {
             this.toggleMonthSelector(sectionId);
             this.toggleExportButton(sectionId);
@@ -579,7 +631,6 @@ handleResize() {
         this.updateActiveNavigation(link);
         this.showSection(sectionId, link);
 
-        // En móviles, no cerrar menú (siempre visible)
         if (window.innerWidth > 767) {
             this.closeMobileMenu();
         }
@@ -631,10 +682,14 @@ handleResize() {
 
     handleLogout() {
         sessionStorage.removeItem('currentUser');
+        sessionStorage.removeItem('userRole');
         window.location.href = 'login.html';
     }
 
-    // Gestión de formularios
+    // =============================================
+    // MÉTODOS DE FORMULARIOS
+    // =============================================
+
     handleAccountSubmit(e) {
         e.preventDefault();
         
@@ -729,14 +784,12 @@ handleResize() {
     }
 
     processTransfer(date, description, fromAccountId, toAccountId, amount) {
-        // Actualizar saldos
         const fromAccount = this.accounts.find(a => a.id === fromAccountId);
         const toAccount = this.accounts.find(a => a.id === toAccountId);
         
         fromAccount.balance -= amount;
         toAccount.balance += amount;
         
-        // Crear transacciones
         const transferOut = {
             id: this.dataManager.getNextTransactionId(),
             date,
@@ -776,7 +829,10 @@ handleResize() {
         }
     }
 
-    // Métodos de actualización después de cambios
+    // =============================================
+    // MÉTODOS DE ACTUALIZACIÓN
+    // =============================================
+
     updateAfterAccountChange() {
         this.loadAccountsTable();
         this.updateAccountSelects();
@@ -798,7 +854,6 @@ handleResize() {
         this.loadTransfersTable();
     }
 
-    // Gestión de alertas
     showAlert(elementId, message, type) {
         const alert = document.getElementById(elementId);
         alert.textContent = message;
@@ -810,7 +865,10 @@ handleResize() {
         }, 3000);
     }
 
-    // Gestión de tablas
+    // =============================================
+    // MÉTODOS DE TABLAS
+    // =============================================
+
     loadAccountsTable() {
         const tbody = document.querySelector('#accounts-table tbody');
         tbody.innerHTML = '';
@@ -903,7 +961,6 @@ handleResize() {
         this.scrollTableToTop('.transfers-table-wrapper');
     }
 
-    // Ordenamiento de datos
     sortTransactionsByDate(transactions) {
         return [...transactions].sort((a, b) => {
             const dateA = a.timestamp ? new Date(a.timestamp) : this.dataManager.parseDateLocal(a.date);
@@ -931,7 +988,10 @@ handleResize() {
         if (wrapper) wrapper.scrollTop = 0;
     }
 
-    // Eliminación de elementos
+    // =============================================
+    // MÉTODOS DE ELIMINACIÓN
+    // =============================================
+
     deleteAccount(id) {
         if (confirm('¿Estás seguro de que quieres eliminar esta cuenta?')) {
             const hasTransactions = this.transactions.some(t => t.accountId === id);
@@ -1002,7 +1062,10 @@ handleResize() {
         });
     }
 
-    // Selectores de cuenta
+    // =============================================
+    // MÉTODOS DE SELECTORES
+    // =============================================
+
     updateAccountSelects() {
         const accountSelects = document.querySelectorAll('#transaction-account, #transfer-from, #transfer-to, #filter-account');
         
@@ -1018,7 +1081,10 @@ handleResize() {
         });
     }
 
-    // Dashboard y reportes
+    // =============================================
+    // MÉTODOS DE DASHBOARD Y REPORTES
+    // =============================================
+
     initMonthSelector() {
         const monthPicker = document.getElementById('dashboard-month-picker');
         const currentBtn = document.getElementById('dashboard-current-month-btn');
@@ -1182,7 +1248,10 @@ handleResize() {
         });
     }
 
-    // Gráficos
+    // =============================================
+    // MÉTODOS DE GRÁFICOS
+    // =============================================
+
     updateFinanceChart(income, expense) {
         const ctx = document.getElementById('finance-chart').getContext('2d');
         
@@ -1385,7 +1454,10 @@ handleResize() {
         }
     }
 
-    // Filtros
+    // =============================================
+    // MÉTODOS DE FILTROS
+    // =============================================
+
     applyFilters() {
         const type = document.getElementById('filter-type').value;
         const category = document.getElementById('filter-category').value;
@@ -1428,7 +1500,10 @@ handleResize() {
         this.loadTransactionsTable();
     }
 
-    // Exportación
+    // =============================================
+    // MÉTODOS DE EXPORTACIÓN
+    // =============================================
+
     exportToCSV() {
         const data = [
             ['Fecha', 'Descripción', 'Categoría', 'Tipo', 'Monto', 'Cuenta']
@@ -1463,7 +1538,10 @@ handleResize() {
         XLSX.writeFile(wb, `finanzas-${fecha}.xlsx`);
     }
 
-    // Utilidades
+    // =============================================
+    // MÉTODOS DE UTILIDAD
+    // =============================================
+
     formatDate(dateString) {
         const date = this.dataManager ? this.dataManager.parseDateLocal(dateString) : new Date(dateString);
         if (isNaN(date.getTime())) return dateString;
@@ -1471,5 +1549,5 @@ handleResize() {
     }
 }
 
-// Inicializar la aplicación cuando se carga la página
+// Variable global de la aplicación
 let app;
