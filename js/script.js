@@ -18,6 +18,48 @@ document.addEventListener('DOMContentLoaded', function() {
         showFriendlyError(error);
     }
 });
+// En tu event listener existente, agrega:
+document.addEventListener('DOMContentLoaded', function() {
+    // 🔒 PROTECCIÓN BÁSICA
+    const protect = function() {
+        // Bloquear clic derecho
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            alert('⛔ Acción no permitida');
+            return false;
+        });
+        
+        // Bloquear teclas de desarrollo
+        document.addEventListener('keydown', function(e) {
+            if (e.keyCode === 123) { // F12
+                e.preventDefault();
+                alert('⛔ Herramientas de desarrollo desactivadas');
+                return false;
+            }
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 73) { // Ctrl+Shift+I
+                e.preventDefault();
+                return false;
+            }
+            if (e.ctrlKey && e.keyCode === 85) { // Ctrl+U
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        // Bloquear copia
+        document.addEventListener('copy', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        console.log('🔒 Protección activada en app');
+    };
+    
+    // Ejecutar protección
+    protect();
+    
+    // ... el resto de tu código existente
+});
 
 function showFriendlyError(error) {
     const errorElement = document.createElement('div');
