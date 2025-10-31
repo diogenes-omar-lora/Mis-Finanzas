@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mis Finanzas Personales</title>
-    <link rel="icon" type="image/png" href="Recursos/icon-logo-wallet.svg">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-      <!-- Aplicación Principal -->
     <div id="app-screen" class="app-container hidden">
         <!-- Barra lateral -->
         <div class="sidebar">
@@ -46,7 +46,7 @@
                     <button id="theme-toggle" class="theme-toggle-btn" title="Cambiar tema">
                         <span class="theme-icon">🌙</span>
                     </button>
-                        <!-- Selector de mes para dashboard y reportes -->
+                    <!-- Selector de mes para dashboard y reportes -->
                     <div class="month-selector dashboard-only" style="display:inline-flex;gap:0.5rem;align-items:center;margin-left:0.5rem;">
                         <input type="month" id="dashboard-month-picker" aria-label="Mes y año" style="padding:0.4rem;border-radius:6px;border:1px solid #ccc;">
                         <button id="dashboard-current-month-btn" class="btn" style="width:auto;padding:0.5rem 0.75rem;">Mes actual</button>
@@ -81,7 +81,6 @@
 
                 <div class="card">
                     <h3>Últimas Transacciones</h3>
-                    <!-- Wrapper con scroll para mostrar solo las últimas 8 filas y permitir scroll si hay más -->
                     <div class="recent-transactions-wrapper">
                         <table id="recent-transactions">
                             <thead>
@@ -338,6 +337,7 @@
                     </form>
                 </div>
             </div>
+
             <!-- Usuarios - Solo para administradores -->
             <div id="users-section" class="section hidden">
                 <div class="card">
@@ -429,9 +429,12 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-    <script src="js/script.js"></script>
+
+    <!-- ✅ AÑADIR OVERLAY PARA MÓVIL -->
+    <div class="menu-overlay" style="display: none;"></div>
+
+    <!-- ✅ SCRIPTS CORREGIDOS - SIN DUPLICADOS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script type="module" src="js/app.js"></script>
 </body>
 </html>

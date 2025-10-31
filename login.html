@@ -10,102 +10,145 @@
 </head>
 <body>
     <div class="login-container">
-        <div class="login-form">
-            <h2><i class="fas fa-wallet"></i> Mis Finanzas</h2>
-            <!-- Formulario de Login -->
-            <form id="login-form" class="form active">
-                <h3>Iniciar Sesión</h3>
-                <div class="form-group">
-                    <label for="username">Usuario</label>
-                    <input type="text" id="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Contraseña</label>
-                    <input type="password" id="password" required>
-                </div>
-                <button type="submit" class="btn">Ingresar</button>
-            </form>
-
-            <!-- Formulario de Registro -->
-            <form id="register-form" class="form hidden">
-                <h3>Crear Cuenta</h3>
-                <div class="form-group">
-                    <label for="new-username">Usuario</label>
-                    <input type="text" id="new-username" required>
-                </div>
-                <div class="form-group">
-                    <label for="new-password">Contraseña</label>
-                    <input type="password" id="new-password" required>
-                </div>
-                <div class="form-group">
-                    <label for="confirm-password">Confirmar Contraseña</label>
-                    <input type="password" id="confirm-password" required>
-                </div>
-                <button type="submit" class="btn">Registrarse</button>
-            </form>
-
-            <div class="form-switch">
-                <p id="switch-text">¿No tienes una cuenta? <a href="#" id="switch-form">Regístrate</a></p>
+        <div class="login-illustration">
+            <div class="illustration-content">
+                <i class="fas fa-chart-line"></i>
+                <h2>Controla Tus Finanzas</h2>
+                <p>Gestiona tus ingresos y gastos de manera inteligente</p>
             </div>
+        </div>
+        
+        <div class="login-form-container">
+            <div class="form-wrapper">
+                <div class="logo">
+                    <i class="fas fa-wallet"></i>
+                    <h1>Mis Finanzas</h1>
+                </div>
 
-            <div id="login-error" class="alert alert-error hidden">
-                Usuario o contraseña incorrectos
-            </div>
-            <div id="register-error" class="alert alert-error hidden">
-                Error en el registro. Las contraseñas no coinciden o el usuario ya existe.
-            </div>
-            <div id="register-success" class="alert alert-success hidden">
-                Registro exitoso. Ahora puedes iniciar sesión.
+                <!-- Formulario de Login -->
+                <form id="login-form" class="form active">
+                    <div class="form-header">
+                        <h3>Bienvenido de nuevo</h3>
+                        <p class="form-subtitle">Ingresa a tu cuenta</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="input-with-icon">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="username" placeholder="Nombre de usuario" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" placeholder="Contraseña" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <span class="btn-text">Iniciar Sesión</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+
+                    <!-- Separador para Login -->
+                    <div class="separator">
+                        <span>o continuar con</span>
+                    </div>
+
+                    <!-- Botón Google para Login (solo ícono) -->
+                    <button type="button" class="btn btn-google-icon" id="google-login" title="Continuar con Google">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE2LjUxIDkuMjA0NTVWOS4wOTU0NUg5LjE4VjEwLjcwNDVIMTMuNDlDMTMuMTIyNyAxMi4yODA5IDExLjYwNTUgMTMuNDMxOCA5LjE4IDEzLjQzMThDNi4zOTUgMTMuNDMxOCA0LjAyIDExLjE3MjcgNC4wMiA4LjQ5OTk1QzQuMDIgNS44MjcyNiA2LjM5NSAzLjU2ODE4IDkuMTggMy41NjgxOEMxMC42MiAzLjU2ODE4IDExLjkxIDQuMTMxODIgMTIuODcgNS4wNjM2NEwxNC42MTY0IDMuMzQ1NDVDMTMuMTg3MyAyLjAwOTA5IDExLjI4NDUgMS4yNSA5LjE4IDEuMjVDNC4zMDM2NCAxLjI1IDAuMzYgNS4wMTM2NCAwLjM2IDguNDk5OTVDMC4zNiAxMS45ODY0IDQuMzAzNjQgMTUuNzUgOS4xOCAxNS43NUMxMy44ODIgMTUuNzUgMTcuNjQgMTIuNDQ1NSAxNy42NCA4LjQ5OTk1QzE3LjY0IDcuNjc3MjcgMTcuNTI1NSA2Ljg5NTQ1IDE3LjMyIDYuMTU5MDlMMTYuNTEgOS4yMDQ1NVoiIGZpbGw9IiM0Mjg1RjQiLz4KPC9zdmc+" alt="Google" class="google-icon">
+                    </button>
+                </form>
+
+                <!-- Formulario de Registro -->
+                <form id="register-form" class="form hidden">
+                    <div class="form-header">
+                        <h3>Crear Cuenta</h3>
+                        <p class="form-subtitle">Comienza a gestionar tus finanzas</p>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <div class="input-with-icon">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="new-name" placeholder="Nombre" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-with-icon">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="new-lastname" placeholder="Apellido" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-with-icon">
+                            <i class="fas fa-at"></i>
+                            <input type="text" id="new-username" placeholder="Nombre de usuario" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="new-password" placeholder="Contraseña" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="confirm-password" placeholder="Confirmar contraseña" required>
+                        </div>
+                        <div class="password-match hidden" id="password-match">
+                            <i class="fas fa-check"></i>
+                            Las contraseñas coinciden
+                        </div>
+                        <div class="password-mismatch hidden" id="password-mismatch">
+                            <i class="fas fa-times"></i>
+                            Las contraseñas no coinciden
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <span class="btn-text">Crear Cuenta</span>
+                        <i class="fas fa-user-plus"></i>
+                    </button>
+
+                    <!-- Separador para Registro -->
+                    <div class="separator">
+                        <span>o registrar con</span>
+                    </div>
+
+                    <!-- Botón Google para Registro (solo ícono) -->
+                    <button type="button" class="btn btn-google-icon" id="google-register" title="Registrar con Google">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE2LjUxIDkuMjA0NTVWOS4wOTU0NUg5LjE4VjEwLjcwNDVIMTMuNDlDMTMuMTIyNyAxMi4yODA5IDExLjYwNTUgMTMuNDMxOCA5LjE4IDEzLjQzMThDNi4zOTUgMTMuNDMxOCA0LjAyIDExLjE3MjcgNC4wMiA4LjQ5OTk1QzQuMDIgNS44MjcyNiA2LjM5NSAzLjU2ODE4IDkuMTggMy41NjgxOEMxMC42MiAzLjU2ODE4IDExLjkxIDQuMTMxODIgMTIuODcgNS4wNjM2NEwxNC42MTY0IDMuMzQ1NDVDMTMuMTg3MyAyLjAwOTA5IDExLjI4NDUgMS4yNSA5LjE4IDEuMjVDNC4zMDM2NCAxLjI1IDAuMzYgNS4wMTM2NCAwLjM2IDguNDk5OTVDMC4zNiAxMS45ODY0IDQuMzAzNjQgMTUuNzUgOS4xOCAxNS43NUMxMy44ODIgMTUuNzUgMTcuNjQgMTIuNDQ1NSAxNy42NCA4LjQ5OTk1QzE3LjY0IDcuNjc3MjcgMTcuNTI1NSA2Ljg5NTQ1IDE3LjMyIDYuMTU5MDlMMDYuNTEgOS4yMDQ1NVoiIGZpbGw9IiM0Mjg1RjQiLz4KPC9zdmc+" alt="Google" class="google-icon">
+                    </button>
+                </form>
+
+                <div class="form-switch">
+                    <p id="switch-text">¿No tienes una cuenta? <a href="#" id="switch-form" class="switch-link">Regístrate</a></p>
+                </div>
+
+                <div id="login-error" class="alert alert-error hidden">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>Usuario o contraseña incorrectos</span>
+                </div>
+                <div id="register-error" class="alert alert-error hidden">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="register-error-text">Error en el registro</span>
+                </div>
+                <div id="register-success" class="alert alert-success hidden">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Registro exitoso. Ahora puedes iniciar sesión.</span>
+                </div>
             </div>
         </div>
     </div>
-    <!-- 🔒 PROTECCIÓN BÁSICA -->
-    <script>
-        // Bloquear clic derecho
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            return false;
-        });
-
-        // Bloquear F12, Ctrl+Shift+I, Ctrl+U
-        document.addEventListener('keydown', function(e) {
-            // F12
-            if (e.keyCode === 123) {
-                e.preventDefault();
-                return false;
-            }
-            // Ctrl+Shift+I
-            if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
-                e.preventDefault();
-                return false;
-            }
-            // Ctrl+U
-            if (e.ctrlKey && e.keyCode === 85) {
-                e.preventDefault();
-                return false;
-            }
-            // Ctrl+Shift+C
-            if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
-                e.preventDefault();
-                return false;
-            }
-        });
-
-        // Bloquear selección de texto (opcional)
-        document.addEventListener('selectstart', function(e) {
-            e.preventDefault();
-            return false;
-        });
-
-        // Bloquear arrastre de imágenes
-        document.addEventListener('dragstart', function(e) {
-            e.preventDefault();
-            return false;
-        });
-
-        console.log('🔒 Protección activada');
-    </script>
-
-    <script src="js/login.js"></script>
+    <!-- ✅ Script modular del login -->
+    <script type="module" src="js/login/login-app.js"></script>
 </body>
 </html>
